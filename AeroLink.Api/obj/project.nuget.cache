@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "1BVbpI6J2A0=",
+  "dgSpecHash": "/Zs6a51umdg=",
   "success": true,
-  "projectFilePath": "C:\\Users\\tancr\\OneDrive\\Desktop\\AeroLink\\TPI-Programacion2\\AeroLink.Api\\AeroLink.Api.csproj",
+  "projectFilePath": "/Users/danii/Desktop/UAP/2do Cuatri/Programación II/TPI-Programacion2/AeroLink.Api/AeroLink.Api.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\tancr\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.11\\microsoft.aspnetcore.openapi.10.0.11.nupkg.sha512",
-    "C:\\Users\\tancr\\.nuget\\packages\\microsoft.openapi\\2.7.5\\microsoft.openapi.2.7.5.nupkg.sha512"
+    "/Users/danii/.nuget/packages/microsoft.aspnetcore.openapi/10.0.11/microsoft.aspnetcore.openapi.10.0.11.nupkg.sha512",
+    "/Users/danii/.nuget/packages/microsoft.openapi/2.7.5/microsoft.openapi.2.7.5.nupkg.sha512"
   ],
   "logs": []
 }

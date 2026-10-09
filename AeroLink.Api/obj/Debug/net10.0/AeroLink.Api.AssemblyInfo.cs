@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AeroLink.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+db4d62c61610f2d9bf8de5949a5386c822f5a2a9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1e510cf975633395ae9f94c8d9a9c4d69ad7577b")]
 [assembly: System.Reflection.AssemblyProductAttribute("AeroLink.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AeroLink.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
