@@ -1,0 +1,104 @@
+### Recorrido completo de AeroLink (extensión "REST Client" de VS Code, Rider o Visual Studio).
+### Ejecutar los pedidos en orden. Los ids asumen una base vacía.
+
+@host = http://localhost:5000
+@key  = ApiKey dev-key-aerolink-123
+
+### 1) Crear vuelo
+POST {{host}}/api/vuelos
+Content-Type: application/json
+
+{ "codigoVuelo": "AL1234", "origen": "EZE", "destino": "AEP",
+  "horarioSalida": "2026-12-01T10:00:00Z", "horarioLlegada": "2026-12-01T12:30:00Z", "aeronave": "LV-ABC" }
+
+### 2) Intentar confirmar SIN slot  ->  409 SLOT_NOT_REQUESTED
+POST {{host}}/api/vuelos/1/confirmar
+Authorization: {{key}}
+
+### 3) Sin API Key  ->  401 API_KEY_MISSING
+POST {{host}}/api/vuelos/1/solicitar-slot
+Content-Type: application/json
+
+{ "pista": 1, "gate": "G04" }
+
+### 4) Solicitar slot al aeropuerto (pista + gate)
+POST {{host}}/api/vuelos/1/solicitar-slot
+Authorization: {{key}}
+Content-Type: application/json
+
+{ "pista": 1, "gate": "G04" }
+
+### 5) Confirmar (valida con el aeropuerto)  ->  Confirmado
+POST {{host}}/api/vuelos/1/confirmar
+Authorization: {{key}}
+
+### 6) Pasajeros
+POST {{host}}/api/pasajeros
+Content-Type: application/json
+
+{ "nombre": "Ana", "apellido": "Gómez", "documento": "30123456", "email": "ana@mail.com" }
+
+###
+POST {{host}}/api/pasajeros
+Content-Type: application/json
+
+{ "nombre": "Beto", "apellido": "Ruiz", "documento": "27999888", "email": "beto@mail.com" }
+
+### 7) Reservas
+POST {{host}}/api/reservas
+Content-Type: application/json
+
+{ "pasajeroId": 1, "vueloId": 1, "asiento": "12A" }
+
+###
+POST {{host}}/api/reservas
+Content-Type: application/json
+
+{ "pasajeroId": 2, "vueloId": 1, "asiento": "14C" }
+
+### 8) Emitir ticket de reserva PENDIENTE  ->  409 RESERVATION_NOT_CONFIRMED
+POST {{host}}/api/tickets
+Authorization: {{key}}
+Content-Type: application/json
+
+{ "reservaId": 1 }
+
+### 9) Confirmar reserva y emitir ticket  ->  201 con código único
+POST {{host}}/api/reservas/1/confirmar
+
+###
+POST {{host}}/api/tickets
+Authorization: {{key}}
+Content-Type: application/json
+
+{ "reservaId": 1 }
+
+### 10) Consulta consolidada (aerolínea + aeropuerto)
+GET {{host}}/api/vuelos/consolidado
+
+### 11) Cancelar el vuelo: libera slot, anula reservas y tickets
+POST {{host}}/api/vuelos/1/cancelar
+Authorization: {{key}}
+
+### 12) Verificar la cascada
+GET {{host}}/api/reservas?vueloId=1
+
+###
+GET {{host}}/api/tickets
+
+### Validación de embarque (la consume PortHub) -> esValido true/false. Reemplazar el código por el del ticket emitido.
+GET {{host}}/api/tickets/AL-XXXXXXXXXX/validacion
+Authorization: {{key}}
+
+### Callback del aeropuerto (para un vuelo con slot solicitado y aún Programado). Identifica el vuelo por codigoVuelo o slotId.
+POST {{host}}/api/aeropuerto/callbacks/slots
+Authorization: {{key}}
+Content-Type: application/json
+
+{ "codigoVuelo": "AL1234", "estado": "OTORGADO" }
+
+### Error de validación  ->  400 con { code, message, details }
+POST {{host}}/api/vuelos
+Content-Type: application/json
+
+{ "codigoVuelo": "X", "origen": "EZ", "destino": "EZ", "aeronave": "" }
