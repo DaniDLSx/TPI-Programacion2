@@ -87,7 +87,7 @@ public class SolicitarSlotDto
 {
     // <example>1</example>
     [Required(ErrorMessage = Msg.Requerido)]
-    [Range(1, 99, ErrorMessage = "El campo {0} debe estar entre {1} y {2}.")]
+    [Range(1, 10, ErrorMessage = "El campo {0} debe estar entre {1} y {2}.")]
     public int? Pista { get; set; }
 
     // <example>G04</example>

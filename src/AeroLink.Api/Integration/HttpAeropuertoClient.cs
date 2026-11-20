@@ -43,7 +43,7 @@ public class HttpAeropuertoClient : IAeropuertoClient
         await contenido.LoadIntoBufferAsync(); // envía Content-Length en vez de "chunked"
 
         using var resp = await EnviarAsync(() => _http.PostAsync("api/slots/solicitudes", contenido, ct), "solicitar slot");
-        if (resp.StatusCode == HttpStatusCode.Conflict)
+        if (resp.StatusCode is HttpStatusCode.Conflict or HttpStatusCode.UnprocessableEntity)
         {
             // Pista o gate ocupados en ese horario (ej: code SLOT_OCCUPIED): es un rechazo de negocio, no una caída.
             var (code, message) = await LeerErrorAsync(resp, ct);
