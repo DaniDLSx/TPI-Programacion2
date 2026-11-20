@@ -105,41 +105,4 @@ public class CancelacionVueloDto
     public bool SlotLiberado { get; set; }
 }
 
-//Datos del slot tal como los informa el aeropuerto (consulta en vivo).
-public class SlotAeropuertoDto
-{
-    public string SlotId { get; set; } = string.Empty;
-    public int? Pista { get; set; }
-    public string? Gate { get; set; }
-    //Pendiente | Otorgado | Rechazado | Liberado | Inexistente | NoDisponible
-    public string Estado { get; set; } = string.Empty;
-    public bool Consultado { get; set; }
-    public string? Error { get; set; }
-}
 
-public class ReservaResumenDto
-{
-    public int Id { get; set; }
-    public string Pasajero { get; set; } = string.Empty;
-    public string Asiento { get; set; } = string.Empty;
-    public EstadoReserva Estado { get; set; }
-    public string? TicketCodigo { get; set; }
-}
-
-public class ReservasDeVueloDto
-{
-    public int Total { get; set; }
-    public int Activas { get; set; }
-    public List<ReservaResumenDto> Items { get; set; } = new();
-}
-
-//Desafío adicional: vuelo + estado de slot (aerolínea y aeropuerto) + reservas.
-public class VueloConsolidadoDto
-{
-    public VueloDto Vuelo { get; set; } = new();
-    //Null si el vuelo nunca solicitó slot.
-    public SlotAeropuertoDto? SlotAeropuerto { get; set; }
-    //True si el estado local del slot coincide con el del aeropuerto. Null si no se pudo comparar.
-    public bool? SlotSincronizado { get; set; }
-    public ReservasDeVueloDto Reservas { get; set; } = new();
-}

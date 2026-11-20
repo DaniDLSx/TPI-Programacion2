@@ -20,10 +20,6 @@ public class VuelosController : ControllerBase
         [FromQuery] EstadoVuelo? estado, [FromQuery] string? origen, [FromQuery] string? destino)
         => Ok(await _servicio.ListarAsync(estado, origen, destino));
 
-    //Consulta consolidada: vuelos con estado de slot (aerolínea y aeropuerto) y reservas asociadas.
-    [HttpGet("consolidado")]
-    public async Task<ActionResult<List<VueloConsolidadoDto>>> Consolidado([FromQuery] EstadoVuelo? estado)
-        => Ok(await _servicio.ConsolidadoAsync(estado));
 
     //Obtiene un vuelo por id.
     [HttpGet("{id:int}")]

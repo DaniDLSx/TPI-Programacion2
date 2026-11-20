@@ -17,8 +17,6 @@ public interface IVueloRepository
     Task<Vuelo?> ObtenerPorSlotIdAsync(string slotId);
     Task<Vuelo?> ObtenerPorCodigoAsync(string codigoVuelo);
     Task<bool> ExisteCodigoAsync(string codigoVuelo);
-    //Vuelos (opcionalmente filtrados) con reservas, pasajeros y tickets, solo lectura.
-    Task<List<Vuelo>> ListarConReservasAsync(EstadoVuelo? estado);
     void Agregar(Vuelo vuelo);
 }
 

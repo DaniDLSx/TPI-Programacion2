@@ -9,7 +9,6 @@ namespace AeroLink.Api.Services;
 
 public class VueloService : IVueloService
 {
-    private const int MaxConsultasSimultaneasAlAeropuerto = 5;
 
     private readonly IVueloRepository _vuelos;
     private readonly IUnitOfWork _uow;
@@ -257,88 +256,6 @@ public class VueloService : IVueloService
             SlotLiberado = liberaSlot
         };
     }
-
-    // ---------- Desafío: consulta consolidada ----------
-
-    public async Task<List<VueloConsolidadoDto>> ConsolidadoAsync(EstadoVuelo? estado)
-    {
-        // Primero se lee toda la base; después se consulta al aeropuerto en paralelo (con tope).
-        var vuelos = await _vuelos.ListarConReservasAsync(estado);
-        using var limite = new SemaphoreSlim(MaxConsultasSimultaneasAlAeropuerto);
-
-        var tareas = vuelos.Select(async vuelo =>
-        {
-            var consolidado = new VueloConsolidadoDto
-            {
-                Vuelo = VueloDto.Desde(vuelo),
-                Reservas = ResumirReservas(vuelo)
-            };
-            if (string.IsNullOrEmpty(vuelo.SlotId)) return consolidado;
-
-            await limite.WaitAsync();
-            try
-            {
-                consolidado.SlotAeropuerto = await ConsultarSlotAsync(vuelo.CodigoVuelo, vuelo.SlotId);
-            }
-            finally
-            {
-                limite.Release();
-            }
-            consolidado.SlotSincronizado = CompararSlot(vuelo.EstadoSlot, consolidado.SlotAeropuerto);
-            return consolidado;
-        });
-
-        return (await Task.WhenAll(tareas)).ToList();
-    }
-
-    private async Task<SlotAeropuertoDto> ConsultarSlotAsync(string codigoVuelo, string slotId)
-    {
-        try
-        {
-            var slot = await _aeropuerto.ObtenerSlotPorVueloAsync(codigoVuelo);
-            return new SlotAeropuertoDto
-            {
-                SlotId = slot?.SlotId ?? slotId,
-                Pista = slot?.Pista,
-                Gate = slot?.Gate,
-                Estado = slot?.Estado.ToString() ?? "Inexistente",
-                Consultado = true
-            };
-        }
-        catch (AeropuertoNoDisponibleException ex)
-        {
-            // Una falla del aeropuerto no debe tirar abajo toda la consulta.
-            return new SlotAeropuertoDto { SlotId = slotId, Estado = "NoDisponible", Consultado = false, Error = ex.Message };
-        }
-    }
-
-    private static bool? CompararSlot(EstadoSlot local, SlotAeropuertoDto? remoto)
-    {
-        if (remoto is null || !remoto.Consultado) return null;
-        return (local, remoto.Estado) switch
-        {
-            (EstadoSlot.Solicitado, "Pendiente") => true,
-            (EstadoSlot.Otorgado, "Otorgado") => true,
-            (EstadoSlot.Rechazado, "Rechazado") => true,
-            // Un slot liberado ya no existe (o figura liberado) en el aeropuerto.
-            (EstadoSlot.Liberado, "Inexistente" or "Liberado") => true,
-            _ => false
-        };
-    }
-
-    private static ReservasDeVueloDto ResumirReservas(Vuelo vuelo) => new()
-    {
-        Total = vuelo.Reservas.Count,
-        Activas = vuelo.Reservas.Count(r => r.Estado != EstadoReserva.Anulada),
-        Items = vuelo.Reservas.OrderBy(r => r.Id).Select(r => new ReservaResumenDto
-        {
-            Id = r.Id,
-            Pasajero = r.Pasajero is null ? string.Empty : $"{r.Pasajero.Nombre} {r.Pasajero.Apellido}",
-            Asiento = r.Asiento,
-            Estado = r.Estado,
-            TicketCodigo = r.Ticket?.Codigo
-        }).ToList()
-    };
 
     // ---------- Auxiliares ----------
 

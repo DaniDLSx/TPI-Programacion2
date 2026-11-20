@@ -17,8 +17,6 @@ public interface IVueloService
     Task<CancelacionVueloDto> CancelarAsync(int id);
     //Procesa el callback del aeropuerto (slot otorgado o rechazado).
     Task<VueloDto> RecibirCallbackSlotAsync(CallbackSlotDto dto);
-    //Desafío: vuelos + slot (local y aeropuerto) + reservas.
-    Task<List<VueloConsolidadoDto>> ConsolidadoAsync(EstadoVuelo? estado);
 }
 
 public interface IPasajeroService

@@ -34,16 +34,6 @@ public class EfVueloRepository : IVueloRepository
     public Task<bool> ExisteCodigoAsync(string codigoVuelo) =>
         _db.Vuelos.AnyAsync(v => v.CodigoVuelo == codigoVuelo);
 
-    public Task<List<Vuelo>> ListarConReservasAsync(EstadoVuelo? estado)
-    {
-        var q = _db.Vuelos.AsNoTracking()
-            .Include(v => v.Reservas).ThenInclude(r => r.Ticket)
-            .Include(v => v.Reservas).ThenInclude(r => r.Pasajero)
-            .AsQueryable();
-        if (estado.HasValue) q = q.Where(v => v.Estado == estado.Value);
-        return q.OrderBy(v => v.HorarioSalida).ThenBy(v => v.Id).ToListAsync();
-    }
-
     public void Agregar(Vuelo vuelo) => _db.Vuelos.Add(vuelo);
 }
 
