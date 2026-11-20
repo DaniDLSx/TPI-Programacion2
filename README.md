@@ -56,7 +56,6 @@ Criterios de aceptación del enunciado y dónde se cumplen:
 | Respuestas JSON con códigos HTTP adecuados | Controladores + `ExceptionHandlingMiddleware` |
 | API Key `Authorization: ApiKey <clave>` en emisión, cancelaciones e integración | Atributo `[RequiereApiKey]` (`Security/ApiKeyAuthorization.cs`) |
 | Validación y errores `{ code, message, details }` | Data Annotations en los DTOs + `ValidationErrorFactory` + middleware global |
-| Desafío: consulta consolidada | `GET /api/vuelos/consolidado` |
 
 ## Estructura (capas vistas en la cátedra)
 

@@ -73,14 +73,11 @@ Content-Type: application/json
 
 { "reservaId": 1 }
 
-### 10) Consulta consolidada (aerolínea + aeropuerto)
-GET {{host}}/api/vuelos/consolidado
-
-### 11) Cancelar el vuelo: libera slot, anula reservas y tickets
+### 10) Cancelar el vuelo: libera slot, anula reservas y tickets
 POST {{host}}/api/vuelos/1/cancelar
 Authorization: {{key}}
 
-### 12) Verificar la cascada
+### 11) Verificar la cascada
 GET {{host}}/api/reservas?vueloId=1
 
 ###

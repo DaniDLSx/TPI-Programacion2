@@ -128,33 +128,6 @@ Si el aeropuerto no responde, devuelve `502` y **no se modifica nada** (se puede
 ```
 Errores: `404`, `409 FLIGHT_ALREADY_CANCELLED`, `502 AIRPORT_UNAVAILABLE`.
 
-### `GET /api/vuelos/consolidado` — *desafío adicional*
-Combina **ambas APIs**: por cada vuelo, su estado de slot local, el estado de slot **consultado en vivo al aeropuerto**, y sus reservas.
-Query opcional: `estado`. Las consultas al aeropuerto se hacen en paralelo (máx. 5 simultáneas). Si el aeropuerto falla para un vuelo,
-la consulta **no se cae**: ese vuelo informa `estado: "NoDisponible"`.
-
-```json
-[
-  {
-    "vuelo": { "id": 1, "codigoVuelo": "AL1234", "estado": "Confirmado", "estadoSlot": "Otorgado", "slotId": "8f3d2e1a-4c2a-41b9-a012-123456789abc", "pista": 1, "gate": "G04",
-               "origen": "EZE", "destino": "AEP", "horarioSalida": "2026-12-01T10:00:00Z",
-               "horarioLlegada": "2026-12-01T12:30:00Z", "aeronave": "LV-ABC" },
-    "slotAeropuerto": { "slotId": "8f3d2e1a-4c2a-41b9-a012-123456789abc", "pista": 1, "gate": "G04", "estado": "Otorgado", "consultado": true, "error": null },
-    "slotSincronizado": true,
-    "reservas": {
-      "total": 2, "activas": 2,
-      "items": [
-        { "id": 1, "pasajero": "Ana Gómez", "asiento": "12A", "estado": "Confirmada", "ticketCodigo": "AL-7K2M9XQ4TB" },
-        { "id": 2, "pasajero": "Beto Ruiz", "asiento": "14C", "estado": "Pendiente",  "ticketCodigo": null }
-      ]
-    }
-  }
-]
-```
-- `slotAeropuerto` es `null` si el vuelo nunca pidió slot.
-- `slotSincronizado` indica si el estado local coincide con el del aeropuerto (`null` si no se pudo consultar).
-- `estado` del slot en el aeropuerto: `Pendiente | Otorgado | Rechazado | Liberado | Inexistente | NoDisponible`.
-
 ---
 
 ## Integración con el aeropuerto — `/api/aeropuerto`
